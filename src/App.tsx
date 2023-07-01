@@ -4,6 +4,8 @@ import SelfCard from './Card';
 import SortBar from './echarts/BarChart/sortBar';
 import {
     CalendarPieChartData,
+    Calendardata,
+    CalendargraphData,
     MultipleXAxisData,
     SortBardataset,
     basicPieData1,
@@ -19,6 +21,11 @@ import ShareDatasetChart from './echarts/pieChart/ShareDataset';
 import BasicRadarChart from './echarts/BasicRadarChart';
 import HeatMapChart from './echarts/heatMap';
 import TreeMapChart from './echarts/treemap';
+import BasicCalendar from './echarts/calendar/basicCalendar';
+import CalendarGraph from './echarts/calendar/CalendarGraph';
+import GradeGauge from './echarts/Gauge/GradeGauge';
+import TemperatureGaugechart from './echarts/Gauge/TemperatureGaugechart';
+import RingGauge from './echarts/Gauge/RingGauge';
 
 const App: React.FC = () => {
     return (
@@ -125,6 +132,54 @@ const App: React.FC = () => {
                     data: treeMapData,
                 }}
             ></TreeMapChart>
+            <BasicCalendar
+                options={{
+                    startDate: '2022-2-1',
+                    endDate: '2022-11-2',
+                    Calendardata,
+                    coordinateType: 'scatter',
+                }}
+            ></BasicCalendar>
+            <CalendarGraph
+                options={{
+                    startDate: '2022-2-1',
+                    endDate: '2022-3-20',
+                    CalendarGraphdata: CalendargraphData,
+                    Calendardata,
+                }}
+            ></CalendarGraph>
+            <GradeGauge
+                options={{
+                    Grades: ['Grade A', 'Grade B', 'Grade C', 'Grade D'],
+                    splitNumber: 8,
+                    data: [
+                        {
+                            value: 0.7,
+                            name: 'Grade Rating',
+                        },
+                        {
+                            value: 0.1,
+                            name: 'Grade 12',
+                        },
+                        {
+                            value: 0.5,
+                            name: 'xxxxx',
+                        },
+                    ],
+                }}
+            ></GradeGauge>
+            <TemperatureGaugechart
+                options={{
+                    datavalue: 30,
+                }}
+            ></TemperatureGaugechart>
+            <RingGauge
+                options={{
+                    RingGaugeData: [
+                        { value: 20, name: 'Perfect' },
+                    ],
+                }}
+            ></RingGauge>
         </>
     );
 };

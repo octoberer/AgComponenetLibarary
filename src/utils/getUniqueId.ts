@@ -1,0 +1,1 @@
+export const getUniqueId =()=> 'id' + Math.random() * 1000 + '_' + Math.random() * 100;

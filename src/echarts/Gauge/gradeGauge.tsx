@@ -21,7 +21,7 @@ export default function GradeGauge({ options }: gradeGaugeType) {
             }
             return color;
         }
-        debugger
+        // debugger
         const color = getColor();
         function correctData() {
             if (data.length == 2) {
@@ -52,7 +52,7 @@ export default function GradeGauge({ options }: gradeGaugeType) {
             }
         }
         correctData();
-        debugger
+        // debugger
         option = {
             series: [
                 {
@@ -99,7 +99,7 @@ export default function GradeGauge({ options }: gradeGaugeType) {
                         distance: -60,
                         rotate: 'tangential',
                         formatter: function (value: number) {
-                            debugger
+                            // debugger
                             let start = 1 / splitNumber;
                             for (let i = 0; i < splitNumber / 2; i++) {
                                 if (Math.abs(value- start)<0.000001){

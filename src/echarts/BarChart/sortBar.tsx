@@ -3,11 +3,19 @@ import { getUniqueId } from '../../utils/getUniqueId';
 import * as echarts from 'echarts';
 
 interface SimpleEncodeType {
-    options: { dimensions: string[]; sourceData: any[][]; sortDimension: string; XDimension: string; YDimension: string };
+    dimensions: string[];
+    sourceData: any[][];
+    sortDimension: string;
+    XDimension: string;
+     /**
+     * 表示y轴的维度
+     */
+    YDimension: string;
 }
+
 const uniqueId = getUniqueId();
-export default function SortBar({ options }: SimpleEncodeType) {
-    const { dimensions, sourceData, sortDimension, XDimension, YDimension } = options;
+export default function SortBar(props: SimpleEncodeType) {
+    const { dimensions, sourceData, sortDimension, XDimension, YDimension } = props;
     useEffect(() => {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);

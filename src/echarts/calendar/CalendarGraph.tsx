@@ -2,17 +2,19 @@ import { useEffect } from 'react';
 import * as echarts from 'echarts';
 import { getUniqueId } from '../../utils/getUniqueId';
 interface CalendarGraphType {
-    options: { startDate: string; endDate: string; CalendarGraphdata: [string, number][];Calendardata: { [x: string]: number } };
+    startDate: string;
+    endDate: string;
+    CalendarGraphdata: [string, number][];
+    Calendardata: { [x: string]: number };
 }
 const uniqueId = getUniqueId();
-export default function CalendarGraph({ options }: CalendarGraphType) {
-    const { CalendarGraphdata,Calendardata, endDate, startDate } = options;
+export default function CalendarGraph({ CalendarGraphdata, Calendardata, endDate, startDate }: CalendarGraphType) {
     useEffect(() => {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);
         let option: echarts.EChartsCoreOption;
 
-        const graphData: [string, number][] = CalendarGraphdata
+        const graphData: [string, number][] = CalendarGraphdata;
 
         const links = graphData.map(function (item, idx) {
             return {
@@ -24,13 +26,13 @@ export default function CalendarGraph({ options }: CalendarGraphType) {
 
         function getVirtualData() {
             let min = Infinity,
-            max = -Infinity;
+                max = -Infinity;
             const date = +echarts.time.parse(startDate);
             const end = +echarts.time.parse(endDate);
             const dayTime = 3600 * 24 * 1000;
             const data: [string, number][] = [];
             for (let time = date; time < end; time += dayTime) {
-                let temp=echarts.time.format(time, '{yyyy}-{MM}-{dd}', false) as string
+                let temp = echarts.time.format(time, '{yyyy}-{MM}-{dd}', false) as string;
                 if (Math.floor(Calendardata[temp]) < min) {
                     min = Math.floor(Calendardata[temp]);
                 }

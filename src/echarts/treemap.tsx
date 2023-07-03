@@ -16,7 +16,7 @@ export default function TreeMapChart({ options }: TreeMapChartType) {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);
         let option: echarts.EChartsCoreOption;
-        debugger
+        // debugger
         option = {
             series: [
                 {

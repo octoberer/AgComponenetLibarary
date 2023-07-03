@@ -3,11 +3,13 @@ import { getUniqueId } from '../../utils/getUniqueId';
 import * as echarts from 'echarts';
 
 interface MultipleXAxisType {
-    options: { sourceData: any[][] };
+    /**
+     * 是个二维数组，第一列是横坐标的刻度值，剩余n列代表当前产品的n个种类（年份）的值
+     */
+    sourceData: any[][];
 }
 const uniqueId = getUniqueId();
-export default function MultipleXAxis({ options }: MultipleXAxisType) {
-    const { sourceData } = options;
+export default function MultipleXAxis({ sourceData }: MultipleXAxisType) {
     useEffect(() => {
         // debugger
         let chartDom = document.getElementById(uniqueId) as HTMLElement;

@@ -3,11 +3,13 @@ import { getUniqueId } from '../../utils/getUniqueId';
 import * as echarts from 'echarts';
 
 interface CalendarPieChartType {
-    options: { Datedata:{[x: string]: any} };
+    /**
+     *     以日期为建，值为pie所需要的数组内容
+     */
+    Datedata:{[x: string]: any[]} 
 }
 const uniqueId = getUniqueId();
-export default function CalendarPieChart({ options }: CalendarPieChartType) {
-    const { Datedata } = options;
+export default function CalendarPieChart({ Datedata }: CalendarPieChartType) {
     useEffect(() => {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);

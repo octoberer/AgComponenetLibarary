@@ -2,11 +2,26 @@ import { useEffect } from 'react';
 import * as echarts from 'echarts';
 import { getUniqueId } from '../../utils/getUniqueId';
 interface basicCalendarType {
-    options: { startDate: string; endDate: string; Calendardata: { [x: string]: number }; coordinateType: 'heatMap' | 'scatter' };
+    /**
+     * 开始日期，以2008-9-1的形式
+     */
+    startDate: string;
+    /**
+     * 结束日期，以2010-3-1的形式
+     */
+    endDate: string;
+    /**
+     * 表示每天对应的值，如'2022-02-01': 1511.458078369152,
+     */
+    Calendardata: { [x: string]: number };
+    /**
+     *     和其他类型的图示联合使用
+     */
+    coordinateType: 'heatmap' | 'scatter';
 }
 const uniqueId = getUniqueId();
-export default function BasicCalendar({ options }: basicCalendarType) {
-    const { Calendardata, endDate, startDate, coordinateType } = options;
+export default function BasicCalendar(props: basicCalendarType) {
+    const { Calendardata, endDate, startDate, coordinateType } = props;
     useEffect(() => {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);
@@ -77,6 +92,6 @@ export default function BasicCalendar({ options }: basicCalendarType) {
         };
 
         myChart.setOption(option);
-    }, []);
+    }, [Calendardata, endDate, startDate, coordinateType]);
     return <div id={uniqueId} style={{ width: 800, height: 500 }}></div>;
 }

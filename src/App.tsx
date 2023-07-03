@@ -16,7 +16,7 @@ import {
 } from './data';
 import MultipleXAxis from './echarts/BarChart/multipleXAxis';
 import BasicPieChart from './echarts/pieChart/BasicChart';
-import CalendarPieChart from './echarts/pieChart/CalendarPieChart';
+import CalendarPieChart from './echarts/calendar/CalendarPieChart';
 import ShareDatasetChart from './echarts/pieChart/ShareDataset';
 import BasicRadarChart from './echarts/BasicRadarChart';
 import HeatMapChart from './echarts/heatMap';
@@ -26,6 +26,8 @@ import CalendarGraph from './echarts/calendar/CalendarGraph';
 import GradeGauge from './echarts/Gauge/GradeGauge';
 import TemperatureGaugechart from './echarts/Gauge/TemperatureGaugechart';
 import RingGauge from './echarts/Gauge/RingGauge';
+import { BarChart } from 'echarts/charts';
+import BasicBarChart from './echarts/BarChart/basicBarChart';
 
 const App: React.FC = () => {
     return (
@@ -54,18 +56,14 @@ const App: React.FC = () => {
                 </Row>
             </div>
             <SortBar
-                options={{
-                    dimensions: SortBardataset.dimensions,
-                    sourceData: SortBardataset.data,
-                    sortDimension: 'score',
-                    XDimension: 'name',
-                    YDimension: 'score',
-                }}
+                    dimensions= {SortBardataset.dimensions}
+                    sourceData={ SortBardataset.data}
+                    sortDimension= 'score'
+                    XDimension= 'name'
+                    YDimension= 'score'
             ></SortBar>
             <MultipleXAxis
-                options={{
-                    sourceData: MultipleXAxisData,
-                }}
+                    sourceData={MultipleXAxisData}
             ></MultipleXAxis>
             <BasicPieChart
                 options={{
@@ -111,9 +109,7 @@ const App: React.FC = () => {
                 }}
             ></BasicPieChart>
             <CalendarPieChart
-                options={{
-                    Datedata: CalendarPieChartData,
-                }}
+                    Datedata= {CalendarPieChartData}
             />
             <ShareDatasetChart
                 options={{
@@ -133,12 +129,10 @@ const App: React.FC = () => {
                 }}
             ></TreeMapChart>
             <BasicCalendar
-                options={{
-                    startDate: '2022-2-1',
-                    endDate: '2022-11-2',
-                    Calendardata,
-                    coordinateType: 'scatter',
-                }}
+                    startDate='2022-2-1'
+                    endDate= '2022-11-2'
+                    Calendardata={Calendardata}
+                    coordinateType='scatter'
             ></BasicCalendar>
             <CalendarGraph
                 options={{
@@ -175,11 +169,35 @@ const App: React.FC = () => {
             ></TemperatureGaugechart>
             <RingGauge
                 options={{
-                    RingGaugeData: [
-                        { value: 20, name: 'Perfect' },
-                    ],
+                    RingGaugeData: [{ value: 20, name: 'Perfect' }],
                 }}
             ></RingGauge>
+            <BasicBarChart
+                title={{
+                    text: 'test',
+                    left:'center'
+                }}
+                xAxisData={['2012', '2013', '2014', '2015', '2016']}
+                seriesdata={[
+                    {
+                        name: 'Forest',
+                        data: [320, 332, 301, 334, 390],
+                    },
+                    {
+                        name: 'Steppe',
+                        data: [220, 182, 191, 234, 290],
+                    },
+                    {
+                        name: 'Desert',
+                        data: [150, 232, 201, 154, 190],
+                    },
+                    {
+                        name: 'Wetland',
+                        data: [98, 77, 101, 99, 40],
+                    },
+                ]}
+                markLine={true}
+            ></BasicBarChart>
         </>
     );
 };

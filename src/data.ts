@@ -334,7 +334,7 @@ const threeDimendData = [
     [19.6, 91852, 'Orange Juice'],
     [10.6, 101852, 'Lemon Juice'],
     [32.7, 20112, 'Walnut Brownie'],
-];
+] as [string|number, string|number,string|number][]
 const SortBardataset = {
     dimensions: ['name', 'age', 'profession', 'score', 'date'],
     data: [

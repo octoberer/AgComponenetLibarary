@@ -8,12 +8,26 @@ import { getUniqueId } from '../../utils/getUniqueId';
 echarts.use([DatasetComponent, GraphicComponent, GridComponent, BarChart, CanvasRenderer]);
 
 interface BarRaceType {
-    // 数组第一项为key组，后续每一个是其对应的数据
-    options: { data: any[][]; startIndex: number; colors: { [x: string]: string } };
+    /**
+     * 是一个二维数组，其中数组第一项是维度，后续都是依照维度所对应的数据；其中0=》比较数据，1=》比较主体，2=》比较时段
+     */
+    data: any[][];
+     /**
+     * 表示数据从第几年（种）开始，一般为0，这里0代表的意思就是从数据中第一个年份2009开始
+     */
+    startIndex: number;
+     /**
+     * 表示比较主体各自代表哪些颜色，键为比较主体，值为颜色
+     */
+    colors: { [x: string]: string };
 }
 const uniqueId = getUniqueId();
-export default function BarRace({ options }: BarRaceType) {
-    const { data, startIndex, colors } = options;
+const defaultData = [
+    ['Income', 'Country', 'Year'],
+    [100938.95992759791, 'china', 2009],
+    [106770.88529530921, 'china', 2010],
+];
+export default function BarRace({ data = defaultData, startIndex, colors }: BarRaceType) {
     useEffect(() => {
         // debugger;
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
@@ -25,7 +39,7 @@ export default function BarRace({ options }: BarRaceType) {
         for (let i = 1; i < data.length; ++i) {
             yearsSet.add(data[i][2]);
         }
-        const years=[...yearsSet]
+        const years = [...yearsSet];
         option = {
             grid: {
                 top: 10,
@@ -43,7 +57,7 @@ export default function BarRace({ options }: BarRaceType) {
             },
             dataset: {
                 source: data.slice(1).filter(function (d) {
-                    return d[2] === startIndex + 2009;
+                    return d[2] === startIndex + years[0];
                 }),
             },
             yAxis: {

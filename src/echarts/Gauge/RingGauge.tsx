@@ -2,11 +2,10 @@ import { useEffect } from 'react';
 import * as echarts from 'echarts';
 import { getUniqueId } from '../../utils/getUniqueId';
 interface RingGaugeType {
-    options: { RingGaugeData: { value: number; name: string; title?: any; detail?: any }[] };
+    RingGaugeData: { value: number; name: string; title?: any; detail?: any }[] ;
 }
 const uniqueId = getUniqueId();
-export default function RingGauge({ options }: RingGaugeType) {
-    const { RingGaugeData } = options;
+export default function RingGauge({ RingGaugeData }: RingGaugeType) {
     useEffect(() => {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);
@@ -119,6 +118,6 @@ export default function RingGauge({ options }: RingGaugeType) {
         };
 
         myChart.setOption(option);
-    }, []);
+    }, [RingGaugeData]);
     return <div id={uniqueId} style={{ width: 800, height: 600 }}></div>;
 }

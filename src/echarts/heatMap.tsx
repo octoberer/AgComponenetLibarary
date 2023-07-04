@@ -1,16 +1,14 @@
 import { useEffect } from 'react';
 import * as echarts from 'echarts';
 import { getUniqueId } from '../utils/getUniqueId';
-import React from 'react';
 
 type x=number
 type y=number
 interface heatMapChartType {
-    options: { heatMapData: [x,y,number][],yAxisData:string[];xAxisData:string[] ,title?:any};
+    heatMapData: [x,y,number][],yAxisData:string[];xAxisData:string[] ,title?:any;
 }
 const uniqueId = getUniqueId();
-export default function HeatMapChart({ options }: heatMapChartType) {
-    const { heatMapData,yAxisData,xAxisData,title } = options;
+export default function HeatMapChart({  heatMapData,yAxisData,xAxisData,title }: heatMapChartType) {
     useEffect(() => {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);

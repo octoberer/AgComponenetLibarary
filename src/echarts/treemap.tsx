@@ -7,11 +7,10 @@ export interface TreeMapChartDataType {
     children?: TreeMapChartDataType[];
 }
 interface TreeMapChartType {
-    options: { data: TreeMapChartDataType[] };
+    data: TreeMapChartDataType[];
 }
 const uniqueId = getUniqueId();
-export default function TreeMapChart({ options }: TreeMapChartType) {
-    const { data } = options;
+export default function TreeMapChart({ data }: TreeMapChartType) {
     useEffect(() => {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);

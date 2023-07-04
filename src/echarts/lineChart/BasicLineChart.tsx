@@ -1,68 +1,69 @@
 import * as echarts from 'echarts';
 import { useEffect } from 'react';
+import { getUniqueId } from '../../utils/getUniqueId';
+type dataType = string | number | { name?: string; value: string | number; itemStyle?: any; label?: any };
 
-interface LineChartType {
-    options: {
-        xAxisData: string[];
-        yAxisData:
-            | string[][]
-            | {
-                  data: string[];
-                  name: string;
-                  step?: 'start' | 'middle' | 'end';
-                  symbol?: 'triangle'|'circle' | 'rect' | 'roundRect' | 'triangle' | 'diamond' | 'pin' | 'arrow' | 'none';
-                  symbolSize?: number;
-                  lineStyle?: {
-                      color: string;
-                      width: number;
-                      type: 'dashed'|'solid'|'dotted';
-                  };
-                  itemStyle?: {
-                      borderWidth: number;
-                      borderColor: string;
-                      color: string;
-                  };
-              }[];
-        smooth?: boolean;
-        areaStyle?: boolean;
-        toolbox?: boolean;
-        boundaryGap?: boolean;
-        legend?: boolean;
-        tooltip?: boolean;
-        markPoint?: { symbol: 'circle' | 'rect' | 'roundRect' | 'triangle' | 'diamond' | 'pin' | 'arrow' | 'none' };
-        visualMap?: {
-            gt: number;
-            lt: number;
-            color: string;
-        }[];
+interface singleSeries {
+    data: dataType[];
+    name: string;
+    symbol?: 'triangle' | 'circle' | 'rect' | 'roundRect' | 'triangle' | 'diamond' | 'pin' | 'arrow' | 'none';
+    symbolSize?: number;
+    lineStyle?: {
+        color: string;
+        width: number;
+        type: 'dashed' | 'solid' | 'dotted';
     };
-    domId: string;
+    smooth?: boolean;
+    areaStyle?: boolean;
+    markMaxAndMinPointSymbol?: 'circle' | 'rect' | 'roundRect' | 'triangle' | 'diamond' | 'pin' | 'arrow' | 'none';
+    markAverageLine?: boolean;
+    markAreaData?: [
+        {
+            name: string;
+            xAxis: string;
+        },
+        {
+            xAxis: string;
+        }
+    ][];
 }
+interface LineChartType {
+    xAxisData: string[];
+    seriesData: singleSeries[];
+    toolbox?: boolean;
+    legend?: boolean;
+    tooltip?: boolean;
+    visualMap?: {
+        min: number;
+        max: number;
+        color: string;
+        seriesIndex: number;
+    }[];
+}
+const uniqueId = getUniqueId();
 
-export default function LineChart({ options, domId }: LineChartType) {
-    const { xAxisData, yAxisData, smooth, areaStyle, boundaryGap, legend, tooltip, markPoint, visualMap } = options;
+export default function LineChart(props: LineChartType) {
+    const { xAxisData, visualMap, seriesData, legend, tooltip } = props;
     useEffect(() => {
-        var chartDom = document.getElementById(domId) as HTMLElement;
+        var chartDom = document.getElementById(uniqueId) as HTMLElement;
         var myChart = echarts.init(chartDom);
         var option;
-
         option = {
             xAxis: {
                 type: 'category',
-                boundaryGap,
                 data: xAxisData,
             },
             yAxis: {
                 type: 'value',
             },
             visualMap: visualMap
-                ? {
+                ? visualMap.map((item) => ({
                       type: 'piecewise',
                       show: false,
                       dimension: 0,
-                      seriesIndex: 0,
-                      pieces: visualMap,
-                  }
+                      seriesIndex: item?.seriesIndex,
+                      pieces: [item],
+                  }))
                 : undefined,
             legend: legend ? {} : undefined,
             tooltip: tooltip
@@ -70,32 +71,36 @@ export default function LineChart({ options, domId }: LineChartType) {
                       trigger: 'axis',
                   }
                 : undefined,
-            series: yAxisData.map((singleYAxisData) => {
-                if (Array.isArray(singleYAxisData)) {
-                    return {
-                        data: singleYAxisData,
-                        type: 'line',
-                        smooth: smooth,
-                        areaStyle: areaStyle ? {} : null,
-                        markPoint: {
-                            symbol: markPoint?.symbol,
-                            data: [{ type: 'average', name: 'average' }],
-                        },
-                    };
-                }
-                const { name, data } = singleYAxisData;
+            series: seriesData.map((singleYAxisData) => {
+                const { markMaxAndMinPointSymbol, markAverageLine, markAreaData } = singleYAxisData;
                 return {
-                    name,
-                    data,
+                    ...singleYAxisData,
+                    markPoint: markMaxAndMinPointSymbol
+                        ? {
+                              symbol: markMaxAndMinPointSymbol,
+                              data: [
+                                  { type: 'max', name: 'Max' },
+                                  { type: 'min', name: 'Min' },
+                              ],
+                          }
+                        : undefined,
+                    markLine: markAverageLine
+                        ? {
+                              data: [{ type: 'average', name: 'Avg' }],
+                          }
+                        : undefined,
+                    markArea: markAreaData
+                        ? {
+                              data: markAreaData,
+                          }
+                        : undefined,
                     type: 'line',
-                    smooth: smooth,
-                    areaStyle: areaStyle ? {} : null,
                 };
             }),
         };
 
         option && myChart.setOption(option);
-    }, [options, domId]);
+    }, []);
 
-    return <div id={domId}></div>;
+    return <div id={uniqueId} style={{ width: 800, height: 600 }}></div>;
 }

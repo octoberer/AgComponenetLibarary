@@ -3,11 +3,10 @@ import { getUniqueId } from '../../utils/getUniqueId';
 import * as echarts from 'echarts';
 
 interface ShareDatasetType {
-    options: { DataSet:{[x: string]: any} };
+   DataSet:{[x: string]: any};
 }
 const uniqueId = getUniqueId();
-export default function ShareDatasetChart({ options }: ShareDatasetType) {
-    const { DataSet} = options;
+export default function ShareDatasetChart({ DataSet }: ShareDatasetType) {
     useEffect(() => {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);

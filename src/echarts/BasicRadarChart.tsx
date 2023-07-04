@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import * as echarts from 'echarts';
 import { getUniqueId } from '../utils/getUniqueId';
-import React from 'react';
 type percent = string | number;
 interface RadarData {
     name: string;
@@ -15,11 +14,12 @@ interface singleseriesType {
 }
 type indicatorType = { text: string; max: number }[];
 interface BasicRadarChartType {
-    options: { radar: { shape?: 'circle'; indicator: indicatorType; center: percent[]; radius: number }[]; series: singleseriesType[] };
+    radar: { shape?: 'circle'; indicator: indicatorType; center: percent[]; radius: number }[];
+    series: singleseriesType[];
 }
+
 const uniqueId = getUniqueId();
-export default function BasicRadarChart({ options }: BasicRadarChartType) {
-    const { radar, series } = options;
+export default function BasicRadarChart({ radar, series }: BasicRadarChartType) {
     useEffect(() => {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);

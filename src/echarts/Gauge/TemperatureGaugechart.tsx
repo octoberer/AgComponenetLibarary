@@ -2,11 +2,10 @@ import { useEffect } from 'react';
 import * as echarts from 'echarts';
 import { getUniqueId } from '../../utils/getUniqueId';
 interface TemperatureGaugechartType {
-    options: { datavalue: number};
+    datavalue: number;
 }
 const uniqueId = getUniqueId();
-export default function TemperatureGaugechart({ options }: TemperatureGaugechartType) {
-    const { datavalue } = options;
+export default function TemperatureGaugechart({ datavalue }: TemperatureGaugechartType) {
     useEffect(() => {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);
@@ -76,9 +75,11 @@ export default function TemperatureGaugechart({ options }: TemperatureGaugechart
                         formatter: '{value} °C',
                         color: 'inherit',
                     },
-                    data:[{
-                        value:datavalue
-                    }],
+                    data: [
+                        {
+                            value: datavalue,
+                        },
+                    ],
                 },
 
                 {
@@ -121,7 +122,7 @@ export default function TemperatureGaugechart({ options }: TemperatureGaugechart
                     ],
                 },
             ],
-        }
+        };
         myChart.setOption(option);
     }, []);
     return <div id={uniqueId} style={{ width: 800, height: 600 }}></div>;

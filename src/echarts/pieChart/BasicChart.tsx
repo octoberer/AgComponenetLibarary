@@ -1,7 +1,7 @@
 import * as echarts from 'echarts';
 import { useEffect } from 'react';
 import { getUniqueId } from '../../utils/getUniqueId';
-type percent = string|number;
+type percent = string | number;
 type dataType = (string | number | { name?: string; value: string | number; itemStyle?: any; label?: any })[];
 interface singleSeries {
     name?: string;
@@ -35,19 +35,17 @@ interface singleSeries {
     type?: any;
     startAngle?: number;
     avoidLabelOverlap?: boolean;
+    center?: [string, string];
 }
 interface BasicPieChartType {
-    options: {
-        title: {
-            text: string;
-            subtext?: string;
-        };
-        seriesdata: singleSeries[];
+    title: {
+        text: string;
+        subtext?: string;
     };
+    seriesdata: singleSeries[];
 }
 const uniqueId = getUniqueId();
-export default function BasicPieChart({ options }: BasicPieChartType) {
-    const { title, seriesdata } = options;
+export default function BasicPieChart({ title, seriesdata }: BasicPieChartType) {
     useEffect(() => {
         // debugger;
         var chartDom = document.getElementById(uniqueId) as HTMLElement;
@@ -59,24 +57,29 @@ export default function BasicPieChart({ options }: BasicPieChartType) {
             for (let singleSeriesData of seriesdata) {
                 const { half, radius, emphasis } = singleSeriesData;
                 if (half) {
-                    const data = singleSeriesData.data as { value: number }[];
-                    const halfitem = {
-                        // make an record to fill the bottom 50%
-                        value: data.reduce((prev: any, item: { value: any }) => prev + item.value, 0),
-                        name: 'other',
-                        itemStyle: {
-                            // stop the chart from rendering this piece
-                            color: 'none',
-                            decal: {
-                                symbol: 'none',
+                    const tempdata = [...singleSeriesData.data] as { value: number }[];
+                    console.log('tempdata',tempdata)
+                    const sum=tempdata.reduce((prev: any, item: { value: any }) => prev + item.value, 0)
+                    const halfItemflag = tempdata.find((item) => item.label?.show===false);
+                    if (!halfItemflag) {
+                        const halfitem = {
+                            // make an record to fill the bottom 50%
+                            value: sum,
+                            itemStyle: {
+                                // stop the chart from rendering this piece
+                                color: 'none',
+                                decal: {
+                                    symbol: 'none',
+                                },
                             },
-                        },
-                        label: {
-                            show: false,
-                        },
-                    };
-                    singleSeriesData.data.push(halfitem);
-                    singleSeriesData.startAngle = 180;
+                            label: {
+                                show: false,
+                            },
+                        };
+                        tempdata.push(halfitem);
+                        singleSeriesData.data = tempdata;
+                        singleSeriesData.startAngle = 180;
+                    }
                 }
                 singleSeriesData.label = singleSeriesData.label
                     ? {
@@ -116,7 +119,7 @@ export default function BasicPieChart({ options }: BasicPieChartType) {
                               shadowColor: 'rgba(0, 0, 0, 0.5)',
                           },
                       };
-                singleSeriesData.type = 'pie';
+                (singleSeriesData.center = ['50%', '50%']), (singleSeriesData.type = 'pie');
                 tempSeriesdata.push(singleSeriesData);
             }
             return tempSeriesdata;
@@ -137,7 +140,7 @@ export default function BasicPieChart({ options }: BasicPieChartType) {
         };
         // debugger;
         option && myChart.setOption(option);
-    }, [options]);
+    }, [seriesdata]);
 
     return <div id={uniqueId} style={{ width: 1000, height: 600 }}></div>;
 }

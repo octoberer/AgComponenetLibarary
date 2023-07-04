@@ -2,28 +2,43 @@ import { useEffect } from 'react';
 import * as echarts from 'echarts';
 import { getUniqueId } from '../../utils/getUniqueId';
 interface gradeGaugeType {
-    options: { Grades: string[]; splitNumber: number; data: { value: number; name: string; title?: any; detail?: any }[] };
+    Grades: string[];
+    data: { value: number; name: string; title?: any; detail?: any }[];
 }
 const uniqueId = getUniqueId();
-export default function GradeGauge({ options }: gradeGaugeType) {
-    const { Grades, data, splitNumber } = options;
+export default function GradeGauge({ Grades, data }: gradeGaugeType) {
     useEffect(() => {
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);
         let option: echarts.EChartsCoreOption;
         const colors = ['#FF6E76', '#FDDD60', '#58D9F9', '#7CFFB2', 'orange', 'purple'];
+        const gradeLen=Grades.length
+        const splitNumber=gradeLen*2
         function getColor() {
             const color: any[] = [];
-            let start = 1 / (splitNumber / 2);
-            for (let i = 0; i < splitNumber / 2; i++) {
+            let start = 1 / (gradeLen);
+            for (let i = 0; i < gradeLen; i++) {
                 color.push([start, colors[i]]);
-                start = 1 / (splitNumber / 2) + start;
+                start = 1 / (gradeLen) + start;
             }
             return color;
         }
         // debugger
         const color = getColor();
         function correctData() {
+            if (data.length == 1) {
+                // 重新排列数据
+                let start = -33;
+                for (let item of data) {
+                    item.title = {
+                        offsetCenter: [0, '20%'],
+                    };
+                    item.detail = {
+                        offsetCenter: [0, '10%'],
+                    };
+                    start = -1 * start;
+                }
+            }
             if (data.length == 2) {
                 // 重新排列数据
                 let start = -33;
@@ -101,11 +116,11 @@ export default function GradeGauge({ options }: gradeGaugeType) {
                         formatter: function (value: number) {
                             // debugger
                             let start = 1 / splitNumber;
-                            for (let i = 0; i < splitNumber / 2; i++) {
-                                if (Math.abs(value- start)<0.000001){
-                                    return Grades[i]
+                            for (let i = 0; i < gradeLen; i++) {
+                                if (Math.abs(value - start) < 0.000001) {
+                                    return Grades[i];
                                 }
-                                start=start+1 / (splitNumber/2)
+                                start = start + 1 / (gradeLen);
                             }
                             return '';
                         },

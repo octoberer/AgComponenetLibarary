@@ -7,15 +7,27 @@ interface MultipleXAxisType {
      * 是个二维数组，第一列是横坐标的刻度值，剩余n列代表当前产品的n个种类（年份）的值
      */
     sourceData: any[][];
+    stack?: boolean;
 }
 const uniqueId = getUniqueId();
-export default function MultipleXAxis({ sourceData }: MultipleXAxisType) {
+export default function MultipleXAxis({ sourceData, stack }: MultipleXAxisType) {
     useEffect(() => {
-        // debugger
         let chartDom = document.getElementById(uniqueId) as HTMLElement;
         let myChart = echarts.init(chartDom);
         let option: echarts.EChartsCoreOption;
-        // debugger;
+        const series = [];
+        for (let i = 0; i < sourceData[0].length - 1; i++) {
+            if (stack) {
+                series.push({
+                    type: 'bar',
+                    stack: 'total',
+                });
+            } else {
+                series.push({
+                    type: 'bar',
+                });
+            }
+        }
         option = {
             legend: {},
             tooltip: {},
@@ -26,7 +38,7 @@ export default function MultipleXAxis({ sourceData }: MultipleXAxisType) {
             yAxis: {},
             // Declare several bar series, each will be mapped
             // to a column of dataset.source by default.
-            series: [{ type: 'bar' }, { type: 'bar' }, { type: 'bar' }],
+            series,
         };
         option && myChart.setOption(option);
     }, []);

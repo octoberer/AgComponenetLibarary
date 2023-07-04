@@ -13,5 +13,6 @@ export default meta;
 export const Default: Story = {
     args: {
         sourceData: MultipleXAxisData,
+        stack:true
     },
 };

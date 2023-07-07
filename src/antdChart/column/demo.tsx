@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import { Column } from '@ant-design/plots';
 import { percent } from '../../commonType';
 import { each, groupBy } from '@antv/util';
+import { color, dataType, label, xAxis, yAxis } from '../commomType';
 interface ColumnType {
     /**
      *   横坐标显示的维度名字
@@ -19,99 +20,103 @@ interface ColumnType {
     /**
      *   表数据，是多个维度对象组成的数组
      */
-    data: {
-        [x: string]: string | number;
-    }[];
-    xAxis?: {
-        range?: [percent, percent];
-        tickCount?: number;
-        nice?: boolean;
-        // tickCount: 8,
-        // 文本标签
-        label?: {
-            autoRotate?: boolean;
-            autoHide?: boolean;
-            offset?: number;
-            style?: {
-                [x: string]: string | number;
-            };
-            formatter?: (name: string) => string;
-        };
-        title?: {
-            text?: string;
-            style?: {
-                fontSize: number;
-            };
-        };
-        tickLine?: {
-            style?: {
-                lineWidth: number;
-                stroke: string;
-            };
-            length?: number;
-        };
-    };
-    yAxis?: {
-        label?: {
-            autoRotate?: boolean;
-            autoHide?: boolean;
-            style?: {
-                fill: string;
-                fontSize: number;
-            };
-            formatter?: (value: any) => any;
-        };
-        title?: {
-            text: string;
-            style?: {
-                fontSize: number;
-            };
-        };
-        tickLine?: {
-            style?: {
-                lineWidth: number;
-                stroke: '#aaa';
-            };
-            length: number;
-        };
-        max?: number;
-    };
+    data: dataType;
+    /**
+     *   可选。xAxis的配置项
+     */
+    xAxis?:xAxis;
+    /**
+     *   可选。yAxis的配置项
+     */
+    yAxis?: yAxis;
+    /**
+     *   可选。为数据维度配置别名，用于显示和tooltip的name值
+     */
     meta?: {
         [x: string]: { alias: string };
     };
     /**
-     *   可选。设置bar的标签位置和样式
+     *   可选。设置column的标签位置和样式
      */
-    label?: {
-        // 可手动配置 label 数据标签位置
-        position?: 'top' | 'middle' | 'bottom';
-        // 配置样式
-        style?: {
-            fill?: string;
-            opacity?: percent;
-        };
-        content?: (Data: { [x: string]: string | number }) => string | undefined;
+    label?: label;
+    /**
+     *   可选。两种方式设置column的颜色，一是回调函数，其传参为传入数据的item，二是颜色数组，控制多个系列呈现不同颜色
+     */
+    color?:color;
+    /**
+     *   可选。设置column的圆角效果
+     */
+    columnStyle?: {
+        radius: [number, number, number, number];
     };
-    color?: (Data: { [x: string]: string | number }) => string | undefined;
+    /**
+     *   可选。是否开启滚动条
+     */
     hasScrollbar?: boolean;
+    /**
+     *   可选。是否开启转化tag功能。这个是用在数据具有流动的情境
+     */
     hasConversionTag?: boolean;
+    /**
+     *   可选。设置column的宽度，如0.8，表示宽度为实际所占位置的80%
+     */
     columnWidthRatio?: percent;
+    /**
+     *   可选。是否开启缩略轴，也可传入初始化的start和end
+     */
     slider?:
         | boolean
         | {
               start: percent;
               end: percent;
           };
+    /**
+     *   可选。是否开启堆叠效果
+     */
     isStack?: boolean;
     /**
-     *   可选。是否添加bar的背景
+     *   可选。是否添加column的背景
      */
     hasColumnBackground?: boolean;
     /**
      *   可选。是否添加当与某个系列交互所产生的阴影连动区域
      */
     connectedArea?: boolean;
+    /**
+     *   可选。是否在column顶部添加总数label
+     */
     hasSumLabel?: boolean;
+    // 分组参数
+    /**
+     *   可选。是否开启分组效果，如果既不开启分组也不开启堆叠，多个系列会重叠在一列中
+     */
+    isGroup?: boolean;
+    /**
+     *   可选。如果同时开启堆叠和分组，需要设置该字段。按照先分组，再堆叠的顺序对数据进行排列
+     */
+    groupField?: string;
+    tooltip?: {
+        formatter: (item: any) => {
+            name: string;
+            value: string;
+        };
+    };
+    /**
+     *   可选。分组柱状图 组内柱子间的间距 (像素级别)
+     */
+    dodgePadding?: number;
+    /**
+     *   可选。分组柱状图 组间的间距 (像素级别)
+     */
+    intervalPadding?: number;
+    /**
+     *   可选。是否开启百分比显示
+     */
+    isPercent?: boolean;
+    /**
+     *   可选。是否开启区间柱状图，这要求data中yaxis字段所指向的值是一个长度为2的数组
+     */
+    isRange?: boolean;
 }
 const getSumLabel = (data: unknown[], xField: string) => {
     const annotations: any[] = [];
@@ -148,7 +153,12 @@ export const DemoColumn = ({
     hasColumnBackground = false,
     connectedArea = false,
     hasSumLabel = false,
-    isStack
+    isStack,
+    isGroup,
+    groupField,
+    tooltip,
+    isPercent,
+    isRange
 }: ColumnType) => {
     let scrollbar, conversionTag;
     if (hasScrollbar) {
@@ -187,7 +197,12 @@ export const DemoColumn = ({
         conversionTag,
         color,
         columnWidthRatio,
-        isStack
+        isStack,
+        isGroup,
+        groupField,
+        tooltip,
+        isPercent,
+        isRange
     };
     if (typeof slider === 'object') {
         config = Object.assign(config, slider);
@@ -209,28 +224,31 @@ export const DemoColumn = ({
             },
         });
     }
-    if (connectedArea) {
+    if (connectedArea && isStack) {
         config = Object.assign(config, {
             interactions: [
                 {
-                    type: 'active-region',
-                    enable: false,
+                    type: 'element-highlight-by-color',
+                },
+                {
+                    type: 'element-link',
                 },
             ],
-            connectedArea: {
-                style: (oldStyle, element) => {
-                    return {
-                        fill: 'rgba(0,0,0,0.25)',
-                        stroke: oldStyle.fill,
-                        lineWidth: 0.5,
-                    };
+        });
+    }
+    if (hasSumLabel && isStack) {
+        const annotations = getSumLabel(data, xField);
+        config = Object.assign(config, { annotations });
+    }
+    if (isPercent) {
+        config = Object.assign(config, {
+            label: {
+                ...config.label,
+                content: (item) => {
+                    return item.value.toFixed(2);
                 },
             },
         });
-    }
-    if (hasSumLabel) {
-        const annotations = getSumLabel(data, xField);
-        config = Object.assign(config, { annotations });
     }
     return <Column {...config} />;
 };

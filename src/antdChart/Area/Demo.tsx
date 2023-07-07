@@ -20,6 +20,9 @@ interface AreaType {
     data: {
         [x: string]: string | number;
     }[];
+    /**
+     *   可选。xAxis的配置项
+     */
     xAxis?: {
         range?: [percent, percent];
         tickCount?: number;
@@ -48,6 +51,9 @@ interface AreaType {
             length?: number;
         };
     };
+    /**
+     *   可选。yAxis的配置项
+     */
     yAxis?: {
         label?: {
             autoRotate?: false;
@@ -70,7 +76,7 @@ interface AreaType {
             };
             length: number;
         };
-        max?:number
+        max?: number;
     };
     slider?:
         | true

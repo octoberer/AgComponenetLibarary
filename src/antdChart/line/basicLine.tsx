@@ -190,7 +190,7 @@ interface lineType {
      *   可选。是否开启阶段折线图
      */
     stepType?: 'vh',
-    legend:boolean
+    legend?:boolean
 }
 const registerPoint = (name: string, conditions: [string, string][]) => {
     console.log(name, conditions);
